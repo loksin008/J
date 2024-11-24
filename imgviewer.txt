@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Ensure that 'feh' is installed
+if ! command -v feh &> /dev/null; then
+    echo "The image viewer 'feh' is not installed. Install it using:"
+    echo "sudo apt update && sudo apt install feh"
+    exit 1
+fi
+
+# Clone the GitHub repository
+REPO_URL="https://github.com/loksin008/image.git"
+REPO_DIR="repository_images"
+
+# Check if the repository directory already exists
+if [ -d "$REPO_DIR" ]; then
+    echo "Repository already cloned. Pulling the latest changes..."
+    cd "$REPO_DIR" && git pull
+else
+    echo "Cloning repository..."
+    git clone "$REPO_URL" "$REPO_DIR"
+    cd "$REPO_DIR" || exit
+fi
+
+# Find all image files in the repository directory
+IMAGES=($(find . -type f -name "*.jpg" -o -name "*.png" -o -name "*.jpeg" -o -name "*.gif"))
+
+# Check if there are any images to display
+if [ ${#IMAGES[@]} -eq 0 ]; then
+    echo "No images found in the repository."
+    exit 1
+fi
+
+# Display images using feh
+echo "Displaying images..."
+feh "${IMAGES[@]}"
